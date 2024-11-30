@@ -1,0 +1,85 @@
+{% extends 'careerai/base.html' %}
+
+{% block content %}
+<div class="container py-8 px-4">
+    <div class="mx-auto max-w-2xl space-y-4">
+        <div class="space-y-2">
+            <h1 class="text-3xl font-bold tracking-tight">Career Recommendations</h1>
+            <p class="text-muted-foreground">
+                Tell us about yourself and we'll recommend the best career paths for you
+            </p>
+        </div>
+        
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+            <div class="space-y-6">
+                <div class="space-y-2">
+                    <h2 class="text-xl font-semibold">Your Profile</h2>
+                    <p class="text-sm text-muted-foreground">Fill in your details to get personalized recommendations</p>
+                </div>
+
+                <form method="post" class="space-y-6">
+                    {% csrf_token %}
+                    
+                    <div class="space-y-4">
+                        <div class="space-y-2">
+                            <label for="id_skills" class="text-sm font-medium">Skills</label>
+                            <input 
+                                type="text" 
+                                name="skills" 
+                                id="id_skills"
+                                placeholder="e.g. Python, JavaScript, Project Management"
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
+                            >
+                            <p class="text-xs text-muted-foreground">Enter your key skills, separated by commas</p>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="id_interests" class="text-sm font-medium">Interests</label>
+                            <textarea 
+                                name="interests" 
+                                id="id_interests"
+                                placeholder="Tell us about your interests and what excites you professionally"
+                                rows="4"
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
+                            ></textarea>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="id_experience" class="text-sm font-medium">Years of Experience</label>
+                            <select 
+                                name="experience" 
+                                id="id_experience"
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
+                            >
+                                <option value="0-2">0-2 years</option>
+                                <option value="3-5">3-5 years</option>
+                                <option value="5-10">5-10 years</option>
+                                <option value="10+">10+ years</option>
+                            </select>
+                        </div>
+
+                        <div class="space-y-2">
+                            <label for="id_goals" class="text-sm font-medium">Career Goals</label>
+                            <textarea 
+                                name="goals" 
+                                id="id_goals"
+                                placeholder="What are your career aspirations and goals?"
+                                rows="4"
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
+                            ></textarea>
+                        </div>
+                    </div>
+
+                    <button 
+                        type="submit" 
+                        class="w-full bg-black hover:bg-black/90 text-white dark:bg-white dark:text-black dark:hover:bg-white/90 h-10 px-4 py-2 rounded-md transition-colors"
+                    >
+                        Get Recommendations
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+

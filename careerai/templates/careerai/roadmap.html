@@ -1,0 +1,64 @@
+{% extends 'careerai/base.html' %}
+{% load careerai_filters %}
+
+{% block content %}
+<div class="container py-8">
+    <div class="mx-auto max-w-4xl space-y-8">
+        <h1 class="text-3xl font-bold tracking-tight">Your Career Roadmap</h1>
+        <div class="space-y-8">
+            {% for stage in stages %}
+            <div class="bg-white dark:bg-gray-800 p-6 rounded-lg shadow-md">
+                <div class="flex items-center justify-between mb-4">
+                    <h2 class="text-2xl font-bold">{{ stage.title }}</h2>
+                    <div class="flex items-center gap-2">
+                        <div class="size-12 rounded-full border-4 border-primary flex items-center justify-center font-bold">
+                            {{ stage.progress|default:0 }}%
+                        </div>
+                    </div>
+                </div>
+                
+                <p class="text-muted-foreground mb-6">{{ stage.description }}</p>
+                
+                <!-- Progress Indicator -->
+                <div class="mb-6">
+                    <div class="flex justify-between items-center mb-2">
+                        <span class="text-sm font-medium">Progress</span>
+                    </div>
+                    <div class="flex gap-1">
+                        {% with ''|center:10 as range %}
+                        {% for _ in range %}
+                            <div class="flex-1 h-2 rounded-full {% if forloop.counter0|multiply:10 < stage.progress|default:0 %}bg-primary{% else %}bg-gray-200 dark:bg-gray-700{% endif %}"></div>
+                        {% endfor %}
+                        {% endwith %}
+                    </div>
+                </div>
+                
+                <!-- Tasks -->
+                <div class="space-y-4">
+                    <h3 class="text-lg font-semibold">Tasks</h3>
+                    {% for task in stage.tasks.all %}
+                    <div class="flex items-center justify-between p-4 bg-gray-100 dark:bg-gray-700 rounded-lg">
+                        <div class="flex items-center">
+                            <input type="checkbox" {% if task.completed %}checked{% endif %} class="form-checkbox h-5 w-5 text-primary">
+                            <span class="ml-2 {% if task.completed %}line-through text-gray-500{% endif %}">{{ task.title }}</span>
+                        </div>
+                        <div class="flex items-center gap-2">
+                            <span class="text-sm text-gray-600 dark:text-gray-400">{{ task.deadline|date:"M d, Y" }}</span>
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full 
+                                {% if task.type == 'Course' %}bg-blue-100 text-blue-800
+                                {% elif task.type == 'Project' %}bg-green-100 text-green-800
+                                {% elif task.type == 'Certification' %}bg-yellow-100 text-yellow-800
+                                {% else %}bg-gray-100 text-gray-800{% endif %}
+                            ">
+                                {{ task.type }}
+                            </span>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+{% endblock %}

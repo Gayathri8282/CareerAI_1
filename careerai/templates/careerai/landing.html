@@ -1,0 +1,64 @@
+{% extends 'careerai/base.html' %}
+
+{% block content %}
+<div class="flex flex-col items-center">
+    <section class="w-full py-12 md:py-24 lg:py-32 xl:py-48 text-center">
+        <div class="container px-4 md:px-6">
+            <div class="flex flex-col items-center space-y-4 text-center">
+                <div class="space-y-2">
+                    <h1 class="text-3xl font-bold tracking-tighter sm:text-5xl xl:text-6xl/none">
+                        Your AI-Powered Career Companion
+                    </h1>
+                    <p class="max-w-[600px] text-gray-500 md:text-xl dark:text-gray-400">
+                        Navigate your career journey with confidence using AI-driven recommendations and expert mentorship.
+                    </p>
+                </div>
+                <div class="flex flex-col gap-2 min-[400px]:flex-row">
+                    <a href="{% url 'dashboard' %}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background bg-primary text-primary-foreground hover:bg-primary/90 h-10 py-2 px-4">
+                        Get Started
+                        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="ml-2 h-4 w-4"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    </a>
+                    <a href="{% url 'about' %}" class="inline-flex items-center justify-center rounded-md text-sm font-medium transition-colors focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:opacity-50 disabled:pointer-events-none ring-offset-background border border-input hover:bg-accent hover:text-accent-foreground h-10 py-2 px-4">
+                        Learn More
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <section class="w-full py-12 md:py-24 lg:py-32 bg-gray-100 dark:bg-gray-800">
+        <div class="container px-4 md:px-6">
+            <div class="grid gap-6 lg:grid-cols-3 items-start">
+                <div class="flex flex-col justify-center space-y-4">
+                    <div class="space-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+                        <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">Personalized Career Recommendations</h2>
+                        <p class="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                            Get AI-powered career suggestions based on your skills, interests, and goals.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center space-y-4">
+                    <div class="space-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+                        <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">Meet Your Mentor</h2>
+                        <p class="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                            Connect with industry experts who can guide you on your career journey.
+                        </p>
+                    </div>
+                </div>
+                <div class="flex flex-col justify-center space-y-4">
+                    <div class="space-y-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-primary"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>
+                        <h2 class="text-3xl font-bold tracking-tighter sm:text-5xl">Your Career Roadmap</h2>
+                        <p class="max-w-[600px] text-gray-500 md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed dark:text-gray-400">
+                            Follow a personalized step-by-step plan to achieve your career goals.
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+</div>
+{% endblock %}
+
