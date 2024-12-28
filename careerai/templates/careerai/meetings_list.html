@@ -1,0 +1,142 @@
+{% extends 'careerai/base.html' %}
+
+{% block content %}
+<div class="container py-8 px-4 fade-in">
+    <div class="mx-auto max-w-4xl space-y-8">
+        <!-- Header Section -->
+        <div class="space-y-2 slide-in">
+            <h1 class="text-3xl font-bold tracking-tight">Your Meetings</h1>
+            <p class="text-gray-600 dark:text-gray-400">Manage your scheduled mentoring sessions</p>
+        </div>
+
+        <!-- Filters -->
+        <div class="flex flex-wrap gap-4 items-center slide-in">
+            <select id="statusFilter" 
+                    class="px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700">
+                <option value="">All Status</option>
+                <option value="pending">Pending</option>
+                <option value="confirmed">Confirmed</option>
+                <option value="completed">Completed</option>
+                <option value="cancelled">Cancelled</option>
+            </select>
+        </div>
+
+        <!-- Meetings List -->
+        <div class="space-y-4">
+            {% for meeting in meetings %}
+            <div class="meeting-card bg-white dark:bg-gray-800 rounded-lg shadow-md overflow-hidden hover:shadow-lg transition-all slide-in"
+                 data-status="{{ meeting.status }}">
+                <div class="p-6 space-y-4">
+                    <div class="flex justify-between items-start">
+                        <div class="space-y-1">
+                            <h3 class="text-xl font-bold">{{ meeting.topic }}</h3>
+                            <p class="text-gray-600 dark:text-gray-400">
+                                with {{ meeting.mentor.name }}
+                            </p>
+                        </div>
+                        <span class="px-3 py-1 rounded-full text-sm font-medium
+                                   {% if meeting.status == 'confirmed' %}bg-green-100 text-green-800
+                                   {% elif meeting.status == 'pending' %}bg-yellow-100 text-yellow-800
+                                   {% elif meeting.status == 'cancelled' %}bg-red-100 text-red-800
+                                   {% else %}bg-gray-100 text-gray-800{% endif %}">
+                            {{ meeting.status|title }}
+                        </span>
+                    </div>
+
+                    <div class="flex items-center space-x-4 text-sm text-gray-600 dark:text-gray-400">
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"/>
+                            </svg>
+                            {{ meeting.date|date:"F j, Y" }}
+                        </div>
+                        <div class="flex items-center">
+                            <svg class="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" 
+                                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+                            </svg>
+                            {{ meeting.time|time:"g:i A" }} ({{ meeting.duration }} mins)
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between">
+                        <span class="text-lg font-bold">${{ meeting.total_price }}</span>
+                        <div class="space-x-2">
+                            <a href="{% url 'meeting_detail' meeting.id %}" 
+                               class="inline-flex items-center px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50">
+                                View Details
+                            </a>
+                            {% if meeting.status == 'pending' or meeting.status == 'confirmed' %}
+                            <button onclick="cancelMeeting('{{ meeting.id }}')"
+                                    class="inline-flex items-center px-4 py-2 border border-red-300 rounded-md text-sm font-medium text-red-700 hover:bg-red-50">
+                                Cancel
+                            </button>
+                            {% endif %}
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% empty %}
+            <div class="text-center py-8 text-gray-600 dark:text-gray-400">
+                <p>No meetings scheduled yet.</p>
+                <a href="{% url 'mentors' %}" 
+                   class="inline-block mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 transition-colors">
+                    Find a Mentor
+                </a>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const statusFilter = document.getElementById('statusFilter');
+    
+    statusFilter.addEventListener('change', function() {
+        const selectedStatus = this.value.toLowerCase();
+        const cards = document.querySelectorAll('.meeting-card');
+        
+        cards.forEach(card => {
+            const cardStatus = card.dataset.status;
+            if (!selectedStatus || cardStatus === selectedStatus) {
+                card.style.display = '';
+                card.classList.add('fade-in');
+            } else {
+                card.style.display = 'none';
+                card.classList.remove('fade-in');
+            }
+        });
+    });
+
+    window.cancelMeeting = function(meetingId) {
+        if (!confirm('Are you sure you want to cancel this meeting?')) {
+            return;
+        }
+
+        showLoadingSpinner();
+        fetch(`/api/cancel-meeting/${meetingId}/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoadingSpinner();
+            if (data.success) {
+                showNotification('Meeting cancelled successfully');
+                setTimeout(() => location.reload(), 1500);
+            } else {
+                showNotification(data.error || 'Failed to cancel meeting', 'error');
+            }
+        })
+        .catch(error => {
+            hideLoadingSpinner();
+            showNotification('An error occurred', 'error');
+        });
+    };
+});
+</script>
+{% endblock %} 

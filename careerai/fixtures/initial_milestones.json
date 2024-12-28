@@ -1,0 +1,44 @@
+[
+    {
+        "model": "careerai.milestone",
+        "pk": 1,
+        "fields": {
+            "user": 1,
+            "title": "Complete Python Basics",
+            "description": "Master fundamental Python concepts and complete practice exercises",
+            "completed": false,
+            "target_date": "2024-03-01",
+            "completed_date": null,
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "careerai.milestone",
+        "pk": 2,
+        "fields": {
+            "user": 1,
+            "title": "Build Portfolio Project",
+            "description": "Create a full-stack web application to showcase your skills",
+            "completed": false,
+            "target_date": "2024-04-01",
+            "completed_date": null,
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "careerai.milestone",
+        "pk": 3,
+        "fields": {
+            "user": 1,
+            "title": "Technical Interview Prep",
+            "description": "Complete 50 coding challenges and practice system design",
+            "completed": false,
+            "target_date": "2024-05-01",
+            "completed_date": null,
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    }
+] 

@@ -1,79 +1,73 @@
 {% extends 'careerai/base.html' %}
 
 {% block content %}
-<div class="container py-8 px-4">
+<div class="container py-8 px-4 fade-in">
     <div class="mx-auto max-w-2xl space-y-4">
-        <div class="space-y-2">
+        <div class="space-y-2 slide-in">
             <h1 class="text-3xl font-bold tracking-tight">Career Recommendations</h1>
-            <p class="text-muted-foreground">
+            <p class="text-gray-600 dark:text-gray-400">
                 Tell us about yourself and we'll recommend the best career paths for you
             </p>
         </div>
         
-        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6">
+        <div class="bg-white dark:bg-gray-800 rounded-lg border border-gray-200 dark:border-gray-700 p-6 slide-in" style="animation-delay: 0.1s">
             <div class="space-y-6">
                 <div class="space-y-2">
                     <h2 class="text-xl font-semibold">Your Profile</h2>
-                    <p class="text-sm text-muted-foreground">Fill in your details to get personalized recommendations</p>
+                    <p class="text-sm text-gray-600 dark:text-gray-400">Fill in your details to get personalized recommendations</p>
                 </div>
 
-                <form method="post" class="space-y-6">
+                <form id="recommendationForm" method="POST" action="{% url 'recommendations' %}">
                     {% csrf_token %}
                     
-                    <div class="space-y-4">
-                        <div class="space-y-2">
-                            <label for="id_skills" class="text-sm font-medium">Skills</label>
-                            <input 
-                                type="text" 
-                                name="skills" 
-                                id="id_skills"
-                                placeholder="e.g. Python, JavaScript, Project Management"
-                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
-                            >
-                            <p class="text-xs text-muted-foreground">Enter your key skills, separated by commas</p>
+                    <!-- Skills Section -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Skills</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   id="skillInput"
+                                   class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700"
+                                   placeholder="Type a skill and press Enter">
                         </div>
-
-                        <div class="space-y-2">
-                            <label for="id_interests" class="text-sm font-medium">Interests</label>
-                            <textarea 
-                                name="interests" 
-                                id="id_interests"
-                                placeholder="Tell us about your interests and what excites you professionally"
-                                rows="4"
-                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
-                            ></textarea>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label for="id_experience" class="text-sm font-medium">Years of Experience</label>
-                            <select 
-                                name="experience" 
-                                id="id_experience"
-                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-800"
-                            >
-                                <option value="0-2">0-2 years</option>
-                                <option value="3-5">3-5 years</option>
-                                <option value="5-10">5-10 years</option>
-                                <option value="10+">10+ years</option>
-                            </select>
-                        </div>
-
-                        <div class="space-y-2">
-                            <label for="id_goals" class="text-sm font-medium">Career Goals</label>
-                            <textarea 
-                                name="goals" 
-                                id="id_goals"
-                                placeholder="What are your career aspirations and goals?"
-                                rows="4"
-                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700 placeholder:text-muted-foreground"
-                            ></textarea>
-                        </div>
+                        <div id="skillTags" class="flex flex-wrap gap-2 mt-2"></div>
+                        <input type="hidden" name="skills" id="skillsHidden">
                     </div>
 
-                    <button 
-                        type="submit" 
-                        class="w-full bg-black hover:bg-black/90 text-white dark:bg-white dark:text-black dark:hover:bg-white/90 h-10 px-4 py-2 rounded-md transition-colors"
-                    >
+                    <!-- Interests Section -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Interests</label>
+                        <div class="relative">
+                            <input type="text" 
+                                   id="interestInput"
+                                   class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700"
+                                   placeholder="Type an interest and press Enter">
+                        </div>
+                        <div id="interestTags" class="flex flex-wrap gap-2 mt-2"></div>
+                        <input type="hidden" name="interests" id="interestsHidden">
+                    </div>
+
+                    <!-- Experience Level -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Experience Level</label>
+                        <select name="experience" 
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700">
+                            <option value="entry">Entry Level (0-2 years)</option>
+                            <option value="mid">Mid Level (3-5 years)</option>
+                            <option value="senior">Senior Level (5+ years)</option>
+                        </select>
+                    </div>
+
+                    <!-- Career Goals -->
+                    <div class="space-y-2">
+                        <label class="text-sm font-medium">Career Goals</label>
+                        <textarea name="goals"
+                                class="w-full px-3 py-2 rounded-md border border-gray-200 dark:border-gray-700"
+                                rows="4"
+                                placeholder="What are your career aspirations and goals?"></textarea>
+                    </div>
+
+                    <button type="submit" 
+                            class="w-full bg-blue-500 hover:bg-blue-600 text-white h-10 px-4 py-2 rounded-md transition-colors">
                         Get Recommendations
                     </button>
                 </form>
@@ -81,5 +75,96 @@
         </div>
     </div>
 </div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('recommendationForm');
+    const skillInput = document.getElementById('skillInput');
+    const interestInput = document.getElementById('interestInput');
+    const skillTags = document.getElementById('skillTags');
+    const interestTags = document.getElementById('interestTags');
+    const skillsHidden = document.getElementById('skillsHidden');
+    const interestsHidden = document.getElementById('interestsHidden');
+    
+    let skills = [];
+    let interests = [];
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        // Update hidden fields with current values
+        skillsHidden.value = skills.join(',');
+        interestsHidden.value = interests.join(',');
+        
+        // Submit the form
+        this.submit();
+    });
+
+    // Handle skill input
+    skillInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const skill = this.value.trim();
+            if (skill && !skills.includes(skill)) {
+                addSkill(skill);
+                this.value = '';
+            }
+        }
+    });
+
+    // Handle interest input
+    interestInput.addEventListener('keydown', function(e) {
+        if (e.key === 'Enter') {
+            e.preventDefault();
+            const interest = this.value.trim();
+            if (interest && !interests.includes(interest)) {
+                addInterest(interest);
+                this.value = '';
+            }
+        }
+    });
+
+    function addSkill(skill) {
+        skills.push(skill);
+        updateSkillTags();
+    }
+
+    function removeSkill(skill) {
+        skills = skills.filter(s => s !== skill);
+        updateSkillTags();
+    }
+
+    function updateSkillTags() {
+        skillTags.innerHTML = skills.map(skill => `
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-sm bg-blue-100 text-blue-800">
+                ${skill}
+                <button type="button" onclick="removeSkill('${skill}')" class="ml-1 text-blue-600 hover:text-blue-800">×</button>
+            </span>
+        `).join('');
+    }
+
+    function addInterest(interest) {
+        interests.push(interest);
+        updateInterestTags();
+    }
+
+    function removeInterest(interest) {
+        interests = interests.filter(i => i !== interest);
+        updateInterestTags();
+    }
+
+    function updateInterestTags() {
+        interestTags.innerHTML = interests.map(interest => `
+            <span class="inline-flex items-center px-2 py-1 rounded-full text-sm bg-green-100 text-green-800">
+                ${interest}
+                <button type="button" onclick="removeInterest('${interest}')" class="ml-1 text-green-600 hover:text-green-800">×</button>
+            </span>
+        `).join('');
+    }
+});
+</script>
+{% endblock %}
 {% endblock %}
 

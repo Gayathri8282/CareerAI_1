@@ -1,0 +1,115 @@
+{% extends 'careerai/base.html' %}
+
+{% block content %}
+<div class="container py-8 px-4 fade-in">
+    <div class="mx-auto max-w-2xl space-y-8">
+        <!-- Header -->
+        <div class="space-y-2 slide-in">
+            <h1 class="text-3xl font-bold tracking-tight">Leave a Review</h1>
+            <p class="text-gray-600 dark:text-gray-400">Share your experience with {{ meeting.mentor.name }}</p>
+        </div>
+
+        <!-- Review Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-6 slide-in">
+            <form id="reviewForm" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Rating -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Rating</label>
+                    <div class="flex items-center space-x-2" id="ratingStars">
+                        {% for i in "12345" %}
+                        <button type="button" 
+                                class="rating-star text-gray-300 hover:text-yellow-400 transition-colors"
+                                data-rating="{{ forloop.counter }}">
+                            <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 20 20">
+                                <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.07 3.292a1 1 0 00.95.69h3.462c.969 0 1.371 1.24.588 1.81l-2.8 2.034a1 1 0 00-.364 1.118l1.07 3.292c.3.921-.755 1.688-1.54 1.118l-2.8-2.034a1 1 0 00-1.175 0l-2.8 2.034c-.784.57-1.838-.197-1.539-1.118l1.07-3.292a1 1 0 00-.364-1.118L2.98 8.72c-.783-.57-.38-1.81.588-1.81h3.461a1 1 0 00.951-.69l1.07-3.292z"/>
+                            </svg>
+                        </button>
+                        {% endfor %}
+                    </div>
+                    <input type="hidden" name="rating" id="ratingInput" required>
+                </div>
+
+                <!-- Comment -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Your Review</label>
+                    <textarea name="comment"
+                              rows="4"
+                              required
+                              placeholder="Share your experience with this mentor..."
+                              class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700"></textarea>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    Submit Review
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const stars = document.querySelectorAll('.rating-star');
+    const ratingInput = document.getElementById('ratingInput');
+    const form = document.getElementById('reviewForm');
+
+    // Handle star rating
+    stars.forEach(star => {
+        star.addEventListener('click', function() {
+            const rating = this.dataset.rating;
+            ratingInput.value = rating;
+            
+            stars.forEach(s => {
+                if (s.dataset.rating <= rating) {
+                    s.classList.add('text-yellow-400');
+                    s.classList.remove('text-gray-300');
+                } else {
+                    s.classList.remove('text-yellow-400');
+                    s.classList.add('text-gray-300');
+                }
+            });
+        });
+    });
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        if (!ratingInput.value) {
+            showNotification('Please select a rating', 'error');
+            return;
+        }
+
+        const formData = new FormData(this);
+        
+        showLoadingSpinner();
+        fetch(`/api/submit-review/{{ meeting.id }}/`, {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoadingSpinner();
+            if (data.success) {
+                showNotification('Review submitted successfully!');
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1500);
+            } else {
+                showNotification(data.error || 'Failed to submit review', 'error');
+            }
+        })
+        .catch(error => {
+            hideLoadingSpinner();
+            showNotification('An error occurred', 'error');
+        });
+    });
+});
+</script>
+{% endblock %} 

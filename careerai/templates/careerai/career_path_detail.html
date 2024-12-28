@@ -1,0 +1,224 @@
+{% extends 'careerai/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-8 px-4">
+    <div class="mx-auto max-w-4xl">
+        <!-- Career Header -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h1 class="text-3xl font-bold mb-4">{{ career.title }}</h1>
+            <p class="text-gray-600 mb-4">{{ career.description }}</p>
+            <div class="flex items-center justify-between">
+                <span class="text-gray-500">Salary Range: <span class="font-medium">{{ career.salary_range }}</span></span>
+                <button onclick="saveCareer('{{ career.id }}')" class="text-blue-500 hover:text-blue-600">
+                    Save Career Path
+                </button>
+            </div>
+        </div>
+
+        <!-- Prerequisites -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Prerequisites</h2>
+            <ul class="space-y-2">
+                {% for prereq in career.prerequisites %}
+                <li class="flex items-start">
+                    <svg class="w-5 h-5 text-blue-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4"/>
+                    </svg>
+                    {{ prereq }}
+                </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <!-- Salary Progression -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Salary Progression</h2>
+            <div class="space-y-4">
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Entry Level</span>
+                    <span class="text-green-600">${{ career.salary_progression.entry_level }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Mid Level</span>
+                    <span class="text-green-600">${{ career.salary_progression.mid_level }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Senior Level</span>
+                    <span class="text-green-600">${{ career.salary_progression.senior_level }}</span>
+                </div>
+                <div class="flex justify-between items-center">
+                    <span class="font-medium">Lead/Architect</span>
+                    <span class="text-green-600">${{ career.salary_progression.lead_architect }}</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Market Demand -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Market Demand</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <div class="p-4 bg-blue-50 rounded-lg">
+                    <div class="text-sm text-gray-600">Annual Growth</div>
+                    <div class="text-xl font-bold text-blue-600">{{ career.market_demand.growth_rate }}</div>
+                </div>
+                <div class="p-4 bg-green-50 rounded-lg">
+                    <div class="text-sm text-gray-600">Job Openings</div>
+                    <div class="text-xl font-bold text-green-600">{{ career.market_demand.job_openings }}</div>
+                </div>
+            </div>
+            <div class="mt-4">
+                <h3 class="font-medium mb-2">Top Locations</h3>
+                <div class="flex flex-wrap gap-2">
+                    {% for location in career.market_demand.top_locations %}
+                    <span class="px-3 py-1 bg-gray-100 rounded-full text-sm">{{ location }}</span>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Related Paths -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Related Career Paths</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                {% for path in career.related_paths %}
+                <a href="{% url 'career_path_detail' path.id %}" 
+                   class="p-4 border rounded-lg hover:bg-gray-50 transition-colors">
+                    {{ path.title }}
+                </a>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Interview Questions -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Common Interview Questions</h2>
+            <div class="space-y-4">
+                {% for question in career.interview_questions %}
+                <div class="p-4 bg-gray-50 rounded-lg">
+                    <p class="font-medium">{{ question }}</p>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Portfolio Projects -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mb-8">
+            <h2 class="text-2xl font-bold mb-4">Recommended Portfolio Projects</h2>
+            <div class="space-y-6">
+                {% for project in career.portfolio_projects %}
+                <div class="border-b pb-6 last:border-b-0 last:pb-0">
+                    <h3 class="text-xl font-bold mb-2">{{ project.title }}</h3>
+                    <p class="text-gray-600 mb-4">{{ project.description }}</p>
+                    <div class="flex flex-wrap gap-2">
+                        {% for feature in project.key_features %}
+                        <span class="px-3 py-1 bg-blue-100 text-blue-800 rounded-full text-sm">{{ feature }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- Learning Path -->
+        <div class="relative">
+            <!-- Timeline Line -->
+            <div class="absolute left-1/2 transform -translate-x-1/2 h-full w-1 bg-blue-200"></div>
+
+            <!-- Stages -->
+            {% for stage in career.stages %}
+            <div class="relative mb-8">
+                <div class="flex items-center mb-4">
+                    <div class="absolute left-1/2 transform -translate-x-1/2 w-4 h-4 bg-blue-500 rounded-full"></div>
+                </div>
+                
+                <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 ml-8 md:ml-0 {% if forloop.counter|divisibleby:2 %}md:ml-1/2{% else %}md:mr-1/2{% endif %}">
+                    <div class="flex justify-between items-start mb-4">
+                        <h3 class="text-xl font-bold">{{ stage.title }}</h3>
+                        <span class="text-sm text-gray-500">{{ stage.duration }}</span>
+                    </div>
+                    <ul class="space-y-2">
+                        {% for task in stage.tasks %}
+                        <li class="flex items-start">
+                            <svg class="w-5 h-5 text-green-500 mr-2 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                            </svg>
+                            {{ task }}
+                        </li>
+                        {% endfor %}
+                    </ul>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Resources Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 mt-8">
+            <h2 class="text-2xl font-bold mb-4">Learning Resources</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <a href="#" class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h3 class="font-medium mb-2">Online Courses</h3>
+                    <p class="text-sm text-gray-600">Find recommended courses on platforms like Coursera, Udemy, and edX</p>
+                </a>
+                <a href="#" class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h3 class="font-medium mb-2">Practice Projects</h3>
+                    <p class="text-sm text-gray-600">Real-world projects to build your portfolio</p>
+                </a>
+                <a href="#" class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h3 class="font-medium mb-2">Community</h3>
+                    <p class="text-sm text-gray-600">Connect with others on the same career path</p>
+                </a>
+                <a href="#" class="p-4 border rounded-lg hover:bg-gray-50">
+                    <h3 class="font-medium mb-2">Mentorship</h3>
+                    <p class="text-sm text-gray-600">Find mentors to guide you through your journey</p>
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function saveCareer(careerId) {
+    fetch('/api/save-career/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+        },
+        body: JSON.stringify({ career_id: careerId })
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.success) {
+            // Show success message
+            const notification = document.createElement('div');
+            notification.className = 'fixed bottom-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg';
+            notification.textContent = 'Career path saved successfully!';
+            document.body.appendChild(notification);
+            
+            // Remove notification after 3 seconds
+            setTimeout(() => {
+                notification.remove();
+            }, 3000);
+        }
+    })
+    .catch(error => {
+        console.error('Error:', error);
+        // Show error message
+        const notification = document.createElement('div');
+        notification.className = 'fixed bottom-4 right-4 bg-red-500 text-white px-6 py-3 rounded-lg shadow-lg';
+        notification.textContent = 'Failed to save career path. Please try again.';
+        document.body.appendChild(notification);
+        
+        setTimeout(() => {
+            notification.remove();
+        }, 3000);
+    });
+}
+</script>
+{% endblock %}
+
+<!-- Add CSRF token -->
+{% csrf_token %} 

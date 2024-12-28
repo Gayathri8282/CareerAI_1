@@ -1,29 +1,37 @@
 from django.contrib import admin
-from .models import UserProfile, CareerPath, Mentor, RoadmapStage, Task
-
-@admin.register(UserProfile)
-class UserProfileAdmin(admin.ModelAdmin):
-    list_display = ('user', 'skills', 'interests', 'experience')
-    search_fields = ('user__username', 'skills', 'interests')
+from .models import UserProfile, Roadmap, RoadmapTask, Skill, CareerPath, Activity
 
 @admin.register(CareerPath)
 class CareerPathAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'skills', 'match_score')
-    search_fields = ('title', 'skills')
+    list_display = ['title', 'get_required_skills']
+    search_fields = ['title', 'description']
 
-@admin.register(Mentor)
-class MentorAdmin(admin.ModelAdmin):
-    list_display = ('name', 'role', 'company', 'expertise', 'availability')
-    search_fields = ('name', 'role', 'company', 'expertise')
+    def get_required_skills(self, obj):
+        return ", ".join([skill.name for skill in obj.required_skills.all()])
+    get_required_skills.short_description = 'Required Skills'
 
-@admin.register(RoadmapStage)
-class RoadmapStageAdmin(admin.ModelAdmin):
-    list_display = ('title', 'description', 'progress')
-    search_fields = ('title',)
+@admin.register(Roadmap)
+class RoadmapAdmin(admin.ModelAdmin):
+    list_display = ['title', 'user', 'created_at']
+    list_filter = ['created_at']
+    search_fields = ['title', 'description']
 
-@admin.register(Task)
-class TaskAdmin(admin.ModelAdmin):
-    list_display = ('title', 'stage', 'type', 'deadline', 'completed')
-    list_filter = ('stage', 'type', 'completed')
-    search_fields = ('title',)
+@admin.register(RoadmapTask)
+class RoadmapTaskAdmin(admin.ModelAdmin):
+    list_display = ['title', 'roadmap', 'completed', 'order', 'created_at']
+    list_filter = ['completed', 'created_at']
+    search_fields = ['title', 'description']
+
+@admin.register(Skill)
+class SkillAdmin(admin.ModelAdmin):
+    list_display = ['name']
+    search_fields = ['name']
+
+@admin.register(Activity)
+class ActivityAdmin(admin.ModelAdmin):
+    list_display = ['user', 'action_type', 'created_at']
+    list_filter = ['action_type', 'created_at']
+    search_fields = ['description']
+
+admin.site.register(UserProfile)
 

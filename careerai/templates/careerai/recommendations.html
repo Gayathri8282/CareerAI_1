@@ -1,0 +1,100 @@
+{% extends 'careerai/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="container py-8 px-4">
+    <form id="recommendationsForm" class="mx-auto max-w-3xl space-y-8">
+        {% csrf_token %}
+        
+        <!-- Skills Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Your Skills</h2>
+            <div id="selectedSkills" class="flex flex-wrap gap-2 mb-4">
+                <!-- Selected skills will appear here -->
+            </div>
+            <input type="text" 
+                   id="skillInput" 
+                   placeholder="Type to add skills..." 
+                   class="w-full p-2 border rounded-lg">
+        </div>
+
+        <!-- Interests Section -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Areas of Interest</h2>
+            <div class="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Web Development">
+                    Web Development
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Mobile Development">
+                    Mobile Development
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Data Science">
+                    Data Science
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Machine Learning">
+                    Machine Learning
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Cloud Computing">
+                    Cloud Computing
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="DevOps">
+                    DevOps
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Cybersecurity">
+                    Cybersecurity
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="UI/UX Design">
+                    UI/UX Design
+                </div>
+                <div class="interest-toggle cursor-pointer p-3 rounded-lg border transition-all duration-200 hover:bg-blue-50" data-interest="Product Management">
+                    Product Management
+                </div>
+            </div>
+        </div>
+
+        <!-- Experience Level -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Experience Level</h2>
+            <select id="experienceLevel" class="w-full p-2 border rounded-lg">
+                <option value="entry">Entry Level (0-2 years)</option>
+                <option value="mid">Mid Level (3-5 years)</option>
+                <option value="senior">Senior Level (5+ years)</option>
+                <option value="lead">Lead/Manager (8+ years)</option>
+            </select>
+        </div>
+
+        <!-- Work Style -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow p-6">
+            <h2 class="text-xl font-bold mb-4">Preferred Work Style</h2>
+            <div class="grid grid-cols-2 gap-4">
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="workStyle" value="remote">
+                    <span>Remote Work</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="workStyle" value="office">
+                    <span>Office Based</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="workStyle" value="hybrid">
+                    <span>Hybrid</span>
+                </label>
+                <label class="flex items-center space-x-2">
+                    <input type="checkbox" name="workStyle" value="flexible">
+                    <span>Flexible Hours</span>
+                </label>
+            </div>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" 
+                class="w-full bg-blue-500 text-white py-3 px-6 rounded-lg hover:bg-blue-600 transition-colors">
+            Get Career Recommendations
+        </button>
+    </form>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script src="{% static 'js/recommendations.js' %}"></script>
+{% endblock %} 

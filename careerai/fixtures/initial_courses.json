@@ -1,0 +1,41 @@
+[
+    {
+        "model": "careerai.course",
+        "pk": 1,
+        "fields": {
+            "title": "Python Fundamentals",
+            "description": "Learn the basics of Python programming including variables, data types, control flow, and functions.",
+            "duration": 10,
+            "url": "https://example.com/python-fundamentals",
+            "skill_level": "beginner",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "careerai.course",
+        "pk": 2,
+        "fields": {
+            "title": "Web Development Basics",
+            "description": "Introduction to HTML, CSS, and JavaScript for building modern websites.",
+            "duration": 12,
+            "url": "https://example.com/web-dev-basics",
+            "skill_level": "beginner",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    },
+    {
+        "model": "careerai.course",
+        "pk": 3,
+        "fields": {
+            "title": "Data Structures & Algorithms",
+            "description": "Learn essential computer science concepts including arrays, linked lists, trees, and sorting algorithms.",
+            "duration": 15,
+            "url": "https://example.com/dsa",
+            "skill_level": "intermediate",
+            "created_at": "2024-01-01T00:00:00Z",
+            "updated_at": "2024-01-01T00:00:00Z"
+        }
+    }
+] 

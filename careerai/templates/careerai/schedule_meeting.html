@@ -1,0 +1,216 @@
+{% extends 'careerai/base.html' %}
+
+{% block content %}
+<div class="container py-8 px-4 fade-in">
+    <div class="mx-auto max-w-2xl space-y-8">
+        <!-- Header Section -->
+        <div class="space-y-2 slide-in">
+            <h1 class="text-3xl font-bold tracking-tight">Schedule a Meeting</h1>
+            <p class="text-gray-600 dark:text-gray-400">Book a session with {{ mentor.name }}</p>
+        </div>
+
+        <!-- Mentor Info Card -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 slide-in">
+            <div class="flex items-center space-x-4">
+                {% if mentor.profile_image %}
+                    <img src="{{ mentor.profile_image.url }}" 
+                         alt="{{ mentor.name }}"
+                         class="w-16 h-16 rounded-full object-cover">
+                {% else %}
+                    <div class="w-16 h-16 rounded-full bg-gray-200 flex items-center justify-center">
+                        <svg class="w-8 h-8 text-gray-400" fill="currentColor" viewBox="0 0 20 20">
+                            <path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"/>
+                        </svg>
+                    </div>
+                {% endif %}
+                
+                <div>
+                    <h2 class="text-xl font-bold">{{ mentor.name }}</h2>
+                    <p class="text-gray-600 dark:text-gray-400">{{ mentor.title }}</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Scheduling Form -->
+        <div class="bg-white dark:bg-gray-800 rounded-lg shadow-md p-6 space-y-6 slide-in">
+            <form id="schedulingForm" class="space-y-6">
+                {% csrf_token %}
+                
+                <!-- Date Selection -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Select Date</label>
+                    <input type="date" 
+                           id="meetingDate" 
+                           name="date"
+                           min="{{ min_date|date:'Y-m-d' }}"
+                           class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700">
+                </div>
+
+                <!-- Time Slots -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Available Time Slots</label>
+                    <div id="timeSlots" class="grid grid-cols-3 gap-2">
+                        <!-- Time slots will be populated dynamically -->
+                    </div>
+                </div>
+
+                <!-- Meeting Duration -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Duration</label>
+                    <select name="duration" 
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700">
+                        <option value="30">30 minutes</option>
+                        <option value="60">1 hour</option>
+                        <option value="90">1.5 hours</option>
+                    </select>
+                </div>
+
+                <!-- Meeting Topic -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Meeting Topic</label>
+                    <input type="text" 
+                           name="topic"
+                           placeholder="e.g., Career Guidance, Technical Interview Prep"
+                           class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700">
+                </div>
+
+                <!-- Additional Notes -->
+                <div class="space-y-2">
+                    <label class="text-sm font-medium">Additional Notes</label>
+                    <textarea name="notes"
+                            rows="3"
+                            placeholder="Any specific topics you'd like to discuss?"
+                            class="w-full px-4 py-2 rounded-lg border border-gray-200 dark:border-gray-700"></textarea>
+                </div>
+
+                <!-- Price Summary -->
+                <div class="bg-gray-50 dark:bg-gray-700 p-4 rounded-lg">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm font-medium">Rate per hour:</span>
+                        <span>${{ mentor.hourly_rate }}/hr</span>
+                    </div>
+                    <div class="flex justify-between items-center mt-2">
+                        <span class="text-sm font-medium">Total:</span>
+                        <span id="totalPrice" class="text-lg font-bold"></span>
+                    </div>
+                </div>
+
+                <button type="submit" 
+                        class="w-full bg-blue-500 hover:bg-blue-600 text-white font-medium py-2 px-4 rounded-lg transition-colors">
+                    Schedule Meeting
+                </button>
+            </form>
+        </div>
+    </div>
+</div>
+
+{% block extra_js %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    const form = document.getElementById('schedulingForm');
+    const dateInput = document.getElementById('meetingDate');
+    const timeSlotsDiv = document.getElementById('timeSlots');
+    const durationSelect = document.querySelector('select[name="duration"]');
+    const totalPriceSpan = document.getElementById('totalPrice');
+    
+    const hourlyRate = parseFloat(JSON.parse(document.getElementById('hourly-rate').textContent)) || 0;
+
+    // Update available time slots when date changes
+    dateInput.addEventListener('change', function() {
+        fetchAvailableTimeSlots(this.value);
+    });
+
+    // Update total price when duration changes
+    durationSelect.addEventListener('change', updateTotalPrice);
+
+    function fetchAvailableTimeSlots(date) {
+        showLoadingSpinner();
+        fetch(`/api/available-slots/${date}/`)
+            .then(response => response.json())
+            .then(data => {
+                hideLoadingSpinner();
+                renderTimeSlots(data.slots);
+            })
+            .catch(error => {
+                hideLoadingSpinner();
+                showNotification('Failed to load time slots', 'error');
+            });
+    }
+
+    function renderTimeSlots(slots) {
+        timeSlotsDiv.innerHTML = slots.map(slot => `
+            <button type="button"
+                    class="time-slot px-4 py-2 border rounded-lg text-sm font-medium
+                           hover:bg-blue-50 focus:ring-2 focus:ring-blue-500"
+                    data-time="${slot}">
+                ${formatTime(slot)}
+            </button>
+        `).join('');
+
+        // Add click handlers to time slots
+        document.querySelectorAll('.time-slot').forEach(button => {
+            button.addEventListener('click', function() {
+                document.querySelectorAll('.time-slot').forEach(b => 
+                    b.classList.remove('bg-blue-500', 'text-white'));
+                this.classList.add('bg-blue-500', 'text-white');
+            });
+        });
+    }
+
+    function formatTime(time) {
+        return new Date(`2000-01-01T${time}`).toLocaleTimeString([], 
+            { hour: 'numeric', minute: '2-digit' });
+    }
+
+    function updateTotalPrice() {
+        const duration = parseInt(durationSelect.value);
+        const total = (hourlyRate * duration / 60).toFixed(2);
+        totalPriceSpan.textContent = `$${total}`;
+    }
+
+    // Initialize total price
+    updateTotalPrice();
+
+    // Handle form submission
+    form.addEventListener('submit', function(e) {
+        e.preventDefault();
+        
+        const selectedTimeSlot = document.querySelector('.time-slot.bg-blue-500');
+        if (!selectedTimeSlot) {
+            showNotification('Please select a time slot', 'error');
+            return;
+        }
+
+        const formData = new FormData(this);
+        formData.append('time', selectedTimeSlot.dataset.time);
+        formData.append('mentor_id', '{{ mentor.id }}');
+
+        showLoadingSpinner();
+        fetch('/api/schedule-meeting/', {
+            method: 'POST',
+            body: formData,
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}'
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            hideLoadingSpinner();
+            if (data.success) {
+                showNotification('Meeting scheduled successfully!');
+                setTimeout(() => {
+                    window.location.href = data.redirect_url;
+                }, 1500);
+            } else {
+                showNotification(data.error || 'Failed to schedule meeting', 'error');
+            }
+        })
+        .catch(error => {
+            hideLoadingSpinner();
+            showNotification('An error occurred. Please try again.', 'error');
+        });
+    });
+});
+</script>
+{% endblock %}
+{% endblock %} 
